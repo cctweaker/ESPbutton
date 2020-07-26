@@ -1,0 +1,146 @@
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+void init_wifi()
+{
+    if (!cfg_wifi || !start_wifi) // WiFi can't start
+        return;
+
+    uint8_t i = 0;
+
+    char HOST_NAME[33];
+    sprintf(HOST_NAME, "%s_v%.2f_%x", HOSTNAME, VERSION, ESP.getChipId());
+
+    WiFi.mode(WIFI_STA);
+    WiFi.hostname(HOST_NAME);
+
+    WiFi.begin(SSIDa, PASSa);
+
+    i = 0;
+    while (WiFi.status() != WL_CONNECTED && i < 100)
+    {
+        delay(100);
+        i++;
+    }
+
+    // if first network not reachable try second one
+    if (WiFi.status() != WL_CONNECTED)
+    {
+        if (strlen(SSIDb) == 0)
+            ESP.restart();
+
+        WiFi.begin(SSIDb, PASSb);
+
+        i = 0;
+        while (WiFi.status() != WL_CONNECTED)
+        {
+            delay(100);
+            i++;
+            if (i > 200)
+                ESP.restart();
+        }
+    }
+
+    use_wifi = true;
+
+#ifdef USE_SSL
+    init_ssl();
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+void init_softap()
+{
+    if (cfg_wifi) // WiFi is configured, no need for softap
+        return;
+
+    use_softap = true;
+
+    WiFi.mode(WIFI_AP);
+
+    WiFi.softAPConfig(STA_IP, STA_IP, STA_MASK);
+
+    char STASSID[33];
+    sprintf(STASSID, "%s_%06x", STA_SSID, ESP.getChipId());
+
+    WiFi.softAP(STASSID, STA_PASS);
+
+    WiFi.scanNetworks(true);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+void init_dns()
+{
+
+    if (cfg_wifi) // WiFi is configured, no need for dns
+        return;
+
+    start_webserver = true; // make sure we use webserver if WiFi not configured!!!
+    use_dns = true;
+
+    /* Setup the DNS server redirecting all the domains to the apIP */
+    dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
+    dnsServer.start(DNS_PORT, "*", STA_IP);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+#ifdef USE_SSL
+void init_ssl()
+{
+
+    use_ssl = true;
+
+    configTime(+3 * 3600, 0, "esp.3dstar.ro", "3dstar.ro", "pool.ntp.org");
+    now = time(nullptr);
+    while (now < 1510592825)
+    {
+        delay(200);
+        now = time(nullptr);
+    }
+    struct tm timeinfo;
+    gmtime_r(&now, &timeinfo);
+
+    BearSSL::X509List cert(digicert);
+    net.setTrustAnchors(&cert);
+}
+#endif
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+void ota_update()
+{
+    do_ota_update = false;
+
+    char url[128];
+
+    // disconnect MQTT
+    if (use_mqtt)
+        client.disconnect();
+
+#ifdef USE_SSL
+    BearSSL::X509List cert(digicert);
+    net.setTrustAnchors(&cert);
+    sprintf(url, "https://%s?t=%s&v=%.2f", update_url, FW_NAME, VERSION);
+#else
+    sprintf(url, "http://%s?t=%s&v=%.2f", update_url, FW_NAME, VERSION);
+#endif
+
+    // check 4 update
+    ESPhttpUpdate.update(net, url);
+
+    ESP.restart();
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
