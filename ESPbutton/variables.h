@@ -140,15 +140,16 @@ char STAT[16] = "/stat";
 // ESP-Now
 /////////////////////////////////////////////////
 uint8_t gmac[6] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED}; // gateway mac
-uint8_t umac[6] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xEF}; // this units mac
+uint8_t umac[6] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xEF}; // this units mac, same for all ESPbuttons
 
+// following keys should be the same on all your ESP-Now devices
 uint8_t kok[16] = {0xDE, 0xAD, 0xBE, 0xEF, 0xDE, 0xAD, 0xBE, 0xEF, 0xDE, 0xAD, 0xBE, 0xEF, 0xDE, 0xAD, 0xBE, 0xEF};
 uint8_t key[16] = {0xFE, 0xED, 0xFE, 0xED, 0xFE, 0xED, 0xFE, 0xED, 0xFE, 0xED, 0xFE, 0xED, 0xFE, 0xED, 0xFE, 0xED};
 
 char NOW_SSID[20] = "ESPbutton";
 char NOW_PASS[16] = "abcd1234";
 uint8_t WIFI_CHANNEL = 1;
-bool HIDE_AP = false;
+uint8_t HIDE_AP = 1;
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
@@ -159,6 +160,7 @@ const char *save_espnow();
 #ifdef USE_SSL
 // following cert is for Let's Encrypt CA
 // it will authenticate any valid Let's Encrypt issued cert
+// for the following few years
 static const char digicert[] PROGMEM = R"EOF(
 -----BEGIN CERTIFICATE-----
 MIIEkjCCA3qgAwIBAgIQCgFBQgAAAVOFc2oLheynCDANBgkqhkiG9w0BAQsFADA/

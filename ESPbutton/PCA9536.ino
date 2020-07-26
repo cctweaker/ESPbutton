@@ -4,7 +4,6 @@
 
 void init_io()
 {
-    // Wire.begin(2, 0); // 3DStar testboards only
     Wire.begin(0, 2); // connect SDA to GPIO0 and SCL to GPIO2
     check_PCA();      // check if PCA9536 is present
     setup_PCA();      // set up PCA input port

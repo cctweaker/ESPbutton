@@ -103,8 +103,6 @@ void mqtt_heartbeat()
     char topic[128];
     char tx[256];
 
-    // sprintf(tx, "{\"l\":\"%s\",\"t\":\"%s\",\"n\":\"%s\",\"fw\":\"%s_v%.2f,\"ID\":\"%06x\",\"vcc\":%d,\"SSID\":\"%s\",\"RSSI\":%d,\"BSSID\":\"%s\"}", LOC, TIP, NAME, FW_NAME, VERSION, ESP.getChipId(), ESP.getVcc(), WiFi.SSID().c_str(), WiFi.RSSI(), WiFi.BSSIDstr().c_str());
-
     DynamicJsonDocument doc(256);
 
     doc["l"] = LOC;
