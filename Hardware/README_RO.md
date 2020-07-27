@@ -15,7 +15,7 @@ Nu se populeaza R9 si R10.
 # ESP-01S
 Nu se populeaza R9 si R10.
 Se taie traseul intre pinii CH_PD si RST ai IC1 de pe fata cablajului conform pozei.
-<img title="ESP-01S mod" src="https://github.com/cctweaker/espbutton/blob/master/Hardware/ESP01-S mod.jpg?raw=true">
+<br><img title="ESP-01S mod" src="https://github.com/cctweaker/espbutton/blob/master/Hardware/ESP01-S mod.jpg?raw=true">
 
 # baterie / semnal sus
 Nu se populeaza R1 si R2 pe fata cablajului.

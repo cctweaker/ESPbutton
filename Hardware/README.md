@@ -15,7 +15,7 @@ Do not populate R9 and R10.
 # ESP-01S
 Do not populate R9 and R10.
 Break away connection on top of PCB between CH_PD and RST on IC1 pins.
-<img title="ESP-01S mod" src="https://github.com/cctweaker/espbutton/blob/master/Hardware/ESP01-S mod.jpg?raw=true">
+<br><img title="ESP-01S mod" src="https://github.com/cctweaker/espbutton/blob/master/Hardware/ESP01-S mod.jpg?raw=true">
 
 # battery power / high
 Do not populate R1 and R2 on top of the PCB.
